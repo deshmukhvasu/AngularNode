@@ -41,7 +41,7 @@ steps:
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'coverage/ang-products/unit-test-result.xml'
-    searchFolder: '$(System.DefaultWorkingDirectory)/vivant-ui/coverage/ang-products/'
+    searchFolder: '$(System.DefaultWorkingDirectory)/AngularNode/vivant-ui/coverage/ang-products/'
 
 - task: CmdLine@2
   inputs:
