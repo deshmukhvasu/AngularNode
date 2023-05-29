@@ -50,7 +50,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/vivant-ui/dist/'
+    PathtoPublish: '$(Build.SourcesDirectory)/vivant-ui/dist/'
     ArtifactName: 'MyArtifact'
     publishLocation: 'Container'
 - task: DockerInstaller@0
