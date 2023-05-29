@@ -1,0 +1,74 @@
+trigger: none
+
+pool:
+  name:default
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'install -g @angular/cli'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'vivant-ui'
+
+- script: |
+- task: CmdLine@2
+  inputs:
+    script: 'npm install karma-junit-reporter --save-dev'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: 'vivant-ui'
+    customCommand: 'run build'
+
+- task: CmdLine@2
+  displayName: "Run Angular tests"
+  inputs:
+    script: |
+      ng test --browsers=ChromeHeadless --code-coverage --watch=false
+    workingDirectory: 'vivant-ui'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'coverage/ang-products/unit-test-result.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/vivant-ui/coverage/ang-products/'
+
+- task: CmdLine@2
+  inputs:
+    script: 'mv Dockerfile dist/ang-products/'
+    workingDirectory: 'vivant-ui'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/vivant-ui/dist/'
+    ArtifactName: 'MyArtifact'
+    publishLocation: 'Container'
+- task: DockerInstaller@0
+  inputs:
+    dockerVersion: '17.09.0-ce'
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      cd vivant-ui/dist/ang-products
+      sudo docker build -t deshmukhvasu/project-ui .
+      sudo docker login -u deshmukhvasu -p 9977450459vd
+      sudo docker push deshmukhvasu/project-ui
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      cd vivant-backend/
+      sudo docker build -t deshmukhvasu/project-backend .
+      sudo docker push deshmukhvasu/project-backend
+
